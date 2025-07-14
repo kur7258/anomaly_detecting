@@ -18,6 +18,10 @@ from utils import show_image_list
 import pandas as pd
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
+
+import matplotlib
+matplotlib.use('Agg')  # Qt 없이 백엔드 'Agg'로 설정 (파일 저장용)
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os

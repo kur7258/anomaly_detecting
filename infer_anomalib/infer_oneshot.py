@@ -1,4 +1,7 @@
 import sys
+import matplotlib
+matplotlib.use('Agg')  # Qt GUI 백엔드 대신 비-GUI 백엔드 사용
+
 from PIL import Image
 sys.path.append('')
 

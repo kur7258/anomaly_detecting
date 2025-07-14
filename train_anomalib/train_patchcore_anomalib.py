@@ -1,6 +1,10 @@
 import torch
 torch.set_float32_matmul_precision('medium')
 
+# Add memory optimization settings
+torch.backends.cudnn.benchmark = True
+torch.backends.cudnn.deterministic = False
+
 from anomalib.data.utils import ValSplitMode
 from anomalib.deploy import ExportType
 from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
@@ -67,11 +71,11 @@ if __name__ == '__main__':
         val_split_mode=ValSplitMode.FROM_TEST,
         val_split_ratio=0.5,
         train_transform=transforms,
-        train_batch_size=4,
+        train_batch_size=1,  # Reduced from 4 to 1
         eval_batch_size=1
     )
 
-    model = Patchcore(coreset_sampling_ratio=0.05)
+    model = Patchcore(coreset_sampling_ratio=0.01)  # Reduced from 0.05 to 0.01
 
     callbacks = [
         ModelCheckpoint(
@@ -95,6 +99,8 @@ if __name__ == '__main__':
         devices=1,
         logger=wandb_logger,
         task=TaskType.CLASSIFICATION,
+        accumulate_grad_batches=4,  # Add gradient accumulation
+        precision="16-mixed",  # Use mixed precision to save memory
     )
 
     print("Fit...")

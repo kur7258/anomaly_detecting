@@ -163,3 +163,9 @@ tabacco_images/
 images_lego_256/
 .DS_Store
 test_data/
+tabacco_val_images/
+temp_for_train/
+temp/
+tabacco_test_images/
+results/
+wandb/
