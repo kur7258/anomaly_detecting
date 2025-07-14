@@ -1,9 +1,31 @@
+import os
+# Set PyTorch memory management environment variables
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb:128,expandable_segments:True'
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+
 import torch
 torch.set_float32_matmul_precision('medium')
 
 # Add memory optimization settings
 torch.backends.cudnn.benchmark = True
 torch.backends.cudnn.deterministic = False
+
+# GPU memory management - limit to available memory
+if torch.cuda.is_available():
+    # Get available GPU memory in GB
+    gpu_memory = torch.cuda.get_device_properties(0).total_memory / 1024**3
+    print(f"Total GPU memory: {gpu_memory:.2f} GB")
+    
+    # Set memory fraction to use (e.g., 80% of available memory)
+    memory_fraction = 0.8
+    torch.cuda.set_per_process_memory_fraction(memory_fraction)
+    
+    # Enable memory efficient attention if available
+    if hasattr(torch.backends.cuda, 'enable_flash_sdp'):
+        torch.backends.cuda.enable_flash_sdp(True)
+    
+    # Set memory pool settings
+    torch.cuda.empty_cache()
 
 from anomalib.data.utils import ValSplitMode
 from anomalib.deploy import ExportType
